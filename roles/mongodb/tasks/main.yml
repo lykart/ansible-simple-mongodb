@@ -1,0 +1,18 @@
+- name: include install_redhat.yml
+  import_tasks: install_redhat.yml
+  when: (( ansible_distribution == "CentOS" ) or (ansible_distribution == "RedHat"))
+  tags:
+    - install_mongodb
+
+- name: include mongod_config.yml
+  import_tasks: mongod_config.yml
+  tags:
+    - deploy_config
+  when: "'mongod' in type"
+
+- name: include replication.yml
+  import_tasks: replication.yml
+  tags:
+    - deploy_config
+  when: "'mongod_master' in type"
+

@@ -1,0 +1,24 @@
+#version
+mongodb_repo_version: "5.0"
+mongodb_packages_version: "5.0.5"
+
+#dirs
+mongodb_data_dir: "/var/lib/mongodb"
+mongodb_run_dir: "/var/run/mongodb"
+mongodb_log_dir: "/var/log/mongodb"
+mongodb_config_dir: "/etc/mongodb"
+
+#mongodb conffig
+mongod_bindip: "0.0.0.0"
+mongod_maxconns: "500"
+mongod_port: "27017"
+mongod_fork: "false"
+mongod_oplogsize: "512"
+mongod_replsetname: "mongodb"
+mongod_security_authorization: "enabled"
+mongodb_ssl_mode: ""
+
+#user config
+mongodb_admin_user: "admin"
+mongodb_admin_pass: "12345678"
+mongodb_update_password: "on_create"

@@ -1,0 +1,12 @@
+mongodb:
+  hosts:
+    mongodb1:                 { ansible_host: "host1", type: ['mongod_master','mongod'], mongod_port: 27017 }
+    mongodb2:                 { ansible_host: "host2", type: ['mongod'], mongod_port: 27017, priority: 1}
+    mongodb3:                 { ansible_host: "host3", type: ['mongod'], mongod_port: 27017, priority: 1}
+  vars:
+    ansible_user: 'admin'
+    ansible_ssh_pass: 'admin'
+    ansible_become_pass: 'admin'
+
+
+

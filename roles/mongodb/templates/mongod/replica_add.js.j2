@@ -1,0 +1,7 @@
+db.auth("{{mongodb_admin_user}}","{{mongodb_admin_pass}}")
+{% for host in groups['mongodb'] %}
+{% if 'mongod' in hostvars[host].type and 'mongod_master' not in hostvars[host].type %}
+rs.add({ host: "{{hostvars[host].ansible_host}}:{{hostvars[host].mongod_port}}", priority: {{hostvars[host].priority}} })
+{% endif %}
+{% endfor %}
+printjson(rs.status())

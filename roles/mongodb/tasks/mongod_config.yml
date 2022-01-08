@@ -1,0 +1,77 @@
+- name: Create mongodb user
+  user: 
+    name: mongod
+    group: mongod
+    state: present
+
+- name: Create mongodb data directory
+  file:
+    dest: "{{mongodb_data_dir}}"
+    state: "directory"
+    mode: "0755"
+    owner: mongod
+    group: mongod
+
+- name: Create mongodb run directory
+  file:
+    dest: "{{mongodb_data_dir}}"
+    state: "directory"
+    mode: "0755"
+    owner: mongod
+    group: mongod
+
+- name: Create mongodb config directory
+  file:
+    dest: "{{mongodb_config_dir}}"
+    state: "directory"
+    mode: "0755"
+    owner: mongod
+    group: mongod
+
+- name: Create mongodb log directory
+  file:
+    dest: "{{mongodb_log_dir}}"
+    state: "directory"
+    mode: "0755"
+    owner: mongod
+    group: mongod
+
+- name: Copy replica key
+  template:
+    src: "files/keyfile"
+    dest: "{{mongodb_data_dir}}/keyfile"
+    owner: mongod
+    group: mongod
+    mode: "0600"
+  when: (mongod_security_authorization == "enabled")
+
+- name: Create mongod service
+  template:
+    src: "mongod/mongod.service.j2"
+    dest: "/etc/systemd/system/mongod.service"
+    mode: "0644"
+
+- name: Deploy mongod config 
+  template:
+    src: "mongod/mongod.conf.j2"
+    dest: "{{mongodb_config_dir}}/mongod.conf"
+    mode: "0755"
+    owner: mongod
+    group: mongod
+  register: mongod_conf
+
+- name: Restart the mongod service when config changed
+  systemd: 
+    name: mongod
+    state: restarted 
+    daemon_reload: yes 
+    enabled: yes
+  when: mongod_conf.changed
+
+- name: Start the mongod service
+  systemd: 
+    name: mongod 
+    state: started 
+    daemon_reload: yes 
+    enabled: yes
+

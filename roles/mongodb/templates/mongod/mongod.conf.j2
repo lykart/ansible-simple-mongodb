@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+
+net:
+  bindIp: {{mongod_bindip}}
+  maxIncomingConnections: {{mongod_maxconns}}
+  port: {{ mongod_port }}
+
+processManagement:
+  fork: {{mongod_fork}}
+  pidFilePath: {{mongodb_run_dir}}/mongod.pid 
+
+replication:
+  oplogSizeMB: {{mongod_oplogsize}}
+  replSetName: {{mongod_replsetname}}
+
+security:
+  authorization: {{mongod_security_authorization}}
+{% if mongod_replsetname and mongod_security_authorization == 'enabled' %}
+  keyFile: {{mongodb_data_dir}}/keyfile
+{% endif %}
+
+storage:
+  dbPath: {{mongodb_data_dir}}
+
+systemLog:
+  destination: file
+  path: "{{mongodb_log_dir}}/mongod.log"
+  logAppend: true

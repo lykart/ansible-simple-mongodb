@@ -1,0 +1,36 @@
+- name: Create file to initialize replica
+  template: 
+    src: mongod/replica_init.js.j2
+    dest: /tmp/replica_init.js
+
+- name: Replication init
+  shell: /usr/bin/mongo "localhost:{{mongod_port}}" /tmp/replica_init.js
+  ignore_errors: yes
+
+- name: Replication init file delete
+  file: 
+    path: /tmp/replica_init.js
+    state: absent
+
+- name: include user_init.yml
+  import_tasks: user_init.yml
+  tags:
+    - deploy_config
+  when: "'mongod_master' in type"
+
+- name: Create file to add replica hosts
+  template: 
+    src: mongod/replica_add.js.j2
+    dest: /tmp/replica_add.js
+
+- name: Replication add hosts
+  shell: /usr/bin/mongo "localhost:{{mongod_port}}/admin" /tmp/replica_add.js
+  ignore_errors: yes
+
+- name: Replication add hosts file delete
+  file: 
+    path: /tmp/replica_add.js
+    state: absent
+
+
+

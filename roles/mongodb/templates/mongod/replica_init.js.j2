@@ -1,0 +1,2 @@
+rs.initiate({ _id : "{{ mongod_replsetname }}", members: [{ _id : 0, host : "{{ ansible_host }}:27017" }]})
+printjson(rs.status())

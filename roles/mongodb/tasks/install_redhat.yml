@@ -1,0 +1,41 @@
+- name: Add repository for mongodb
+  template:
+    src: "mongodb_redhat.repo.j2"
+    dest: "/etc/yum.repos.d/mongodb.repo"
+    mode: 0644
+
+- name: Install mongodb
+  package:
+    name:
+      - mongodb-org-mongos-{{mongodb_packages_version}}
+      - mongodb-org-shell-{{mongodb_packages_version}}
+      - mongodb-org-server-{{mongodb_packages_version}}
+      - python3-pip
+      - python3
+    state: present
+
+- name: Install PyMongo from PIP
+  pip:
+    name: pymongo
+    state: present
+    executable: pip3
+
+- name: "Set config SELINUX=disabled"
+  lineinfile: 
+    dest: /etc/selinux/config 
+    regexp: '^SELINUX=' 
+    line: 'SELINUX=disabled' 
+    state: present
+
+- name: "Disable SELinux runtime"
+  shell: "/usr/sbin/setenforce Permissive"
+  register: setenforce
+  failed_when: setenforce.rc >= 2
+
+- name: Enable port firewalld
+  firewalld:
+    port: "{{mongod_port}}/tcp"
+    permanent: yes
+    state: enabled
+    immediate: true
+
